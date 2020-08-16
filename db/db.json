@@ -1,0 +1,31 @@
+{
+  "users": [
+    {
+      "id": "1",
+      "name": "Bob Marley",
+      "email": "bobm@gmail.com"
+    },
+    {
+      "id": "3",
+      "name": "Sam Jack",
+      "email": "sj@gmail.com"
+    },
+    {
+      "id": "2",
+      "name": "Adam Clark",
+      "email": "ac@gmail.com"
+    }
+  ],
+  "comments": [
+    {
+      "id": 1,
+      "body": "some comments",
+      "userid": "1"
+    },
+    {
+      "id": 2,
+      "body": "big mac is good",
+      "userid": "2"
+    }
+  ]
+}
