@@ -12,7 +12,7 @@ function getServerData(url) {
     };
     return fetch(url, fetchOptions).then(
         response => response.json(),
-        err => console.log(ee)
+        err => console.log(err)
     );
     /* then(
         data => console.log(data)
@@ -62,23 +62,23 @@ function fillDataTable(data, tableId) {
             //console.log(row[ind]);
             text = row[ind];
             let td = createAnyElement("td");
-            if (ind == "id"){
-                td.innerHTML = row[ind];
-            }else {
-                let input = createAnyElement("input",
-                    {
-                        class: "form-control",
-                        value: row[ind]
+            let input = createAnyElement("input",
+                {
+                    class: "form-control",
+                    value: row[ind],
+                    name: ind
+    
                 });
-                td.appendChild(input);
-            };
-            
+            if (ind == "id"){
+                
+                input.setAttribute("readonly",true);
+            }
+            td.appendChild(input);
             tr.appendChild(td);
 
         }
         let grTd = createBtnGroup();
         tr.appendChild(grTd);
-
 
         tBody.appendChild(tr);
     }
@@ -98,7 +98,7 @@ function createAnyElement(name, attributes) {
 
 function createBtnGroup() {
     let group = createAnyElement("div");
-    let infoBtn = createAnyElement("button", { class: "btn btn-info", onclick: "getInfo(this)" });
+    let infoBtn = createAnyElement("button", { class: "btn btn-info", onclick: "setUser(this)" });
     let delBtn = createAnyElement("button", { class: "btn btn-danger", onclick: "delUser(this)" });
     infoBtn.innerHTML = '<i class="fa fa-refresh" aria-hidden="true"></i>';
     delBtn.innerHTML = '<i class="fa fa-trash" aria-hidden="true"></i>';
@@ -127,12 +127,15 @@ function removeAllChildNodes(parent) {
 function delUser(btn) {
     let tr = btn.parentElement.parentElement.parentElement;
     console.log(tr);
+    let data= getRowData(tr);
 
     //egy megoldas az elso child az id
     //id =tr.children[0].innerHTML;
     //masik megoldas
-    let id = tr.querySelector("td:first-child").innerHTML;
-    console.log(id);
+    //let id = tr.querySelector("td:first-child").innerHTML;
+    let id = data.id;
+
+    console.log("id= ", id);
     let fetchOptions = {
         method: "DELETE",
         mode: "cors",
@@ -140,7 +143,7 @@ function delUser(btn) {
     };
     fetch(`http://localhost:3000/users/${id}`, fetchOptions).then(
         response => response.json(),
-        err => console.log(ee)
+        err => console.log(err)
     ).then(
         data => {
             startGetServerData();
@@ -207,11 +210,11 @@ function createUser(btn){
 
 function getRowData(tr){
     let inputs = tr.querySelectorAll("input.form-control");
-
+    
     let data={};
     for (let i=0; i < inputs.length;i++){
         data[inputs[i].name]=inputs[i].value;  
-        console.log(inputs[i].value) ;
+        //console.log(inputs[i].value) ;
     }
     return data;
 }
@@ -219,3 +222,27 @@ function getRowData(tr){
 
 
 
+function setUser(btn){
+    let tr= btn.parentElement.parentElement.parentElement;    
+    let data= getRowData(tr);
+    
+    let fetchOptions= {
+        method: "PUT",
+        mode:  "cors",
+        cache: "no-cache",
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)  
+    };
+    fetch(`http://localhost:3000/users/${data.id}`, fetchOptions).then(
+        response => response.json(),
+        err => console.log(err)
+    ).then(
+        data => {
+            startGetServerData();
+        }
+    );
+
+
+}
